@@ -63,11 +63,12 @@ class Account(threading.Thread):
                 get_num_owned = self.dalc.select_number_owned(self.traderId, symbol, threading.current_thread())
                 if len(get_num_owned) != 0:
                     num_owned = get_num_owned[0]["NUMBER_OWNED"] + num_shares
+					self.dml.update_trader(self.traderId, symbol, num_owned, threading.current_thread())
                 else:
                     num_owned = num_shares
-                self.balance -= num_shares*share_price
-                self.dml.update_trader_properties(self.traderId, self.balance, threading.current_thread())
-                self.dml.update_trader(self.traderId, symbol, num_owned, threading.current_thread())
+					self.dml.insert_into_trader(self.traderId, symbol, num_owned, threading.current_thread())
+				self.balance -= num_shares*share_price
+				self.dml.update_trader_properties(self.traderId, self.balance, threading.current_thread())
             else:
                 print 'Requesting to buy more shares than your Trader can afford'
 
