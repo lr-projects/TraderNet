@@ -62,8 +62,9 @@ class GeneticTrader(threading.Thread):
     def checkData(self, dataDict):
         for key in self.chromosome.keys():
             if key not in dataDict.keys():
-                print 'data does not contain the correct keys'
-                return False
+				if not (key == 'pe' and 'price_earnings_ratio' in dataDict.keys()) or (key!='ticker_trend'):
+					print 'data does not contain the correct keys'
+					return False
             elif dataDict[key] == 'N/A':
                 print 'data is N/A'
                 return False
@@ -73,7 +74,12 @@ class GeneticTrader(threading.Thread):
     def innerProd(self, dataDict):
         sum = 0
         for key in self.chromosome.keys():
-            sum += self.chromosome[key]*float(self.cleanse(dataDict[key]))
+			if key=='pe' and key not in dataDict.keys():
+				sum += self.chromosome['pe']*float(self.cleanse(dataDict['price_earnings_ratio']))
+			elif key=='ticker_trend' and key not in dataDict.keys():
+				sum += self.chromosome['ticker_trend']*float(self.cleanse(dataDict['change']))
+			else:
+				sum += self.chromosome[key]*float(self.cleanse(dataDict[key]))
         return sum
     
     def cleanse(self, value):
